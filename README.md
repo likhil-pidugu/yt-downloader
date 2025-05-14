@@ -24,9 +24,8 @@
 **✅Windows**: [**Download Python**](https://www.python.org/downloads/windows/)
 
  During install: Check `Add Python to PATH`
-""
-""
-``
+
+`                                                                                    . `
 
 **✅Linux (Debian/Ubuntu):**
 
