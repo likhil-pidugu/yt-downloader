@@ -45,7 +45,7 @@ pip install yt_dlp tqdm
 
 #### ✅ Windows Installation
 
-1. Go to: [https://www.gyan.dev/ffmpeg/builds/]([https://www.gyan.dev/ffmpeg/builds](https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-7.1.1-essentials_build.zip)
+1. Go to: [https://www.gyan.dev/ffmpeg/builds/]([https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-7.1.1-essentials_build.zip])
 2. Download **“Essentials build”*(ZIP file)
 3. Extract it (e.g., to `C:\ffmpeg`)
 4. Add to PATH:
