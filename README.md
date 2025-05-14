@@ -21,12 +21,14 @@
 
 ### 1️⃣ Install Python (Skip if already installed)
 
-**Windows**:*[**Download Python**](https://www.python.org/downloads/windows/)
+**✅Windows**: [**Download Python**](https://www.python.org/downloads/windows/)
 
-✅ During install: Check `Add Python to PATH`
+ During install: Check `Add Python to PATH`
+""
+""
+``
 
-
-**Linux (Debian/Ubuntu):**
+**✅Linux (Debian/Ubuntu):**
 
   ```bash
   sudo apt update
