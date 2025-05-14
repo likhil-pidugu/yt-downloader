@@ -3,11 +3,16 @@
 
 **Features :**
 
-🎥 Download YouTube videos in **MP4*(video) or **MP3*(audio only)
+🎥 Download YouTube videos in **MP4**(video) or **MP3**(audio only)
+
 📶 Specify resolution: `720`, `1080`, etc.
-📁 Save to a **custom directory*with **custom title**
-✅ Terminal **progress bars*for download + conversion
+
+📁 Save to a **custom directory** with **custom title**
+
+✅ Terminal **progress bars** for download + conversion
+
 ⚙️ Works on **Windows & Linux**
+
 💡 Silent mode – no unnecessary logs or errors
 
 ---
