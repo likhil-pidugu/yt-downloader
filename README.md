@@ -16,8 +16,9 @@
 
 ### 1️⃣ Install Python (Skip if already installed)
 
-**Windows:*[Download Python](https://www.python.org/downloads/windows/)
-  ✅ During install: Check `Add Python to PATH`
+**Windows**:*[**Download Python**](https://www.python.org/downloads/windows/)**
+✅ During install: Check `Add Python to PATH`
+
 **Linux (Debian/Ubuntu):**
 
   ```bash
@@ -30,7 +31,7 @@
 ### 2️⃣ Install Required Python Packages
 
 ```bash
-pip install yt-dlp tqdm
+pip install yt_dlp tqdm
 ```
 
 ---
@@ -96,7 +97,7 @@ python fetch-video.py "https://www.youtube.com/watch?v=abc123" mp4 --title "My C
 ### 📁 **Save to Custom Directory**
 
 ```bash
-python fetch-video.py "https://www.youtube.com/watch?v=abc123" mp4 --output "E:/Videos"
+python fetch-video.py "https://www.youtube.com/watch?v=abc123" mp4 --output "E:/Videos" --title "Python Tutorial"
 ```
 
 ---
