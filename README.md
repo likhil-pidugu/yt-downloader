@@ -25,7 +25,7 @@
 
  During install: Check `Add Python to PATH`
 
-`                                                                                    . `
+\\
 
 **✅Linux (Debian/Ubuntu):**
 
