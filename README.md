@@ -65,6 +65,7 @@ pip install yt_dlp tqdm
 
 ```bash
 sudo apt update
+sudo apt install libxml2
 sudo apt install ffmpeg
 ```
 
