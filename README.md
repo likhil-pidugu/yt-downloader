@@ -21,8 +21,10 @@
 
 ### 1️⃣ Install Python (Skip if already installed)
 
-**Windows**:*[**Download Python**](https://www.python.org/downloads/windows/)**
+**Windows**:*[**Download Python**](https://www.python.org/downloads/windows/)
+
 ✅ During install: Check `Add Python to PATH`
+
 
 **Linux (Debian/Ubuntu):**
 
@@ -45,9 +47,9 @@ pip install yt_dlp tqdm
 
 #### ✅ Windows Installation
 
-1. Go to: [https://www.gyan.dev/ffmpeg/builds/]([https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-7.1.1-essentials_build.zip])
-2. Download **“Essentials build”*(ZIP file)
-3. Extract it (e.g., to `C:\ffmpeg`)
+1. Click here to download : [**FFMPEG**](https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-7.1.1-essentials_build.zip)
+2. Extract **“Essentials build”**(ZIP file) and rename it to **ffmpeg**
+3. paste ffmpeg folder at  (e.g., to `C:\ffmpeg`)
 4. Add to PATH:
 
    Search **"Environment Variables"*→ Edit `Path`
@@ -149,13 +151,4 @@ parser.add_argument('--output', default='E:/YTDownloads', help='Output directory
 
 ---
 
-## 📝 Recommended Improvements (Optional)
-
-Add support for **playlist downloads**
-Add **thumbnail + metadata embedding*for MP3
-Add **GUI*(Tkinter or PyQt)
-Add **JSON log mode*for automation
-
----
-
-Let me know if you want me to generate a `README.md` file and folder structure for publishing on GitHub or converting it into a portable `.exe` file (for Windows users)!
+Thank you for downloading our project — we truly appreciate your support and hope it enhances your workflow!
