@@ -82,31 +82,31 @@ ffmpeg -version
 ### 📥 **Basic Usage (MP4 - Best Quality Available)**
 
 ```bash
-python fetch-video.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ" mp4
+python downloader.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ" mp4
 ```
 
 ### 📥 **Download with Custom Resolution (e.g. 1080p)**
 
 ```bash
-python fetch-video.py "https://www.youtube.com/watch?v=abc123" mp4 --resolution 1080
+python downloader.py "https://www.youtube.com/watch?v=abc123" mp4 --resolution 1080
 ```
 
 ### 🎵 **Download MP3 (Audio Only)**
 
 ```bash
-python fetch-video.py "https://www.youtube.com/watch?v=abc123" mp3
+python downloader.py "https://www.youtube.com/watch?v=abc123" mp3
 ```
 
 ### 📁 **Save with Custom Title**
 
 ```bash
-python fetch-video.py "https://www.youtube.com/watch?v=abc123" mp4 --title "My Cool Video"
+python downloader.py "https://www.youtube.com/watch?v=abc123" mp4 --title "My Cool Video"
 ```
 
 ### 📁 **Save to Custom Directory**
 
 ```bash
-python fetch-video.py "https://www.youtube.com/watch?v=abc123" mp4 --output "E:/Videos" --title "Python Tutorial"
+python downloader.py "https://www.youtube.com/watch?v=abc123" mp4 --output "E:/Videos" --title "Python Tutorial"
 ```
 
 ---
@@ -116,11 +116,11 @@ python fetch-video.py "https://www.youtube.com/watch?v=abc123" mp4 --output "E:/
 Here are some **working test URLs**:
 
 ```bash
-python fetch-video.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ" mp4 --resolution 720 --title "rickroll"
+python downloader.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ" mp4 --resolution 720 --title "rickroll"
 
-python fetch-video.py "https://www.youtube.com/watch?v=2Vv-BfVoq4g" mp3 --title "Perfect_Song"
+python downloader.py "https://www.youtube.com/watch?v=2Vv-BfVoq4g" mp3 --title "Perfect_Song"
 
-python fetch-video.py "https://www.youtube.com/shorts/Bg4D4PW2WTo" mp4 --resolution 1080 --title "kulosa video song"
+python downloader.py "https://www.youtube.com/shorts/Bg4D4PW2WTo" mp4 --resolution 1080 --title "kulosa video song"
 ```
 
 ---
