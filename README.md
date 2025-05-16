@@ -3,7 +3,7 @@
 
 **Features :**
 
-🎥 Download YouTube videos in **MP4**(video) or **MP3**(audio only)
+🎥 Download YouTube videos in **mp4**(video) or **mp3**(audio only)
 
 📶 Specify resolution: `720`, `1080`, etc.
 
@@ -44,7 +44,7 @@ pip install yt_dlp tqdm
 
 ---
 
-### 3️⃣ Install **FFmpeg*(Required for MP4/MP3 Merging)
+### 3️⃣ Install **FFmpeg*(Required for mp4/mp3 Merging)
 
 #### ✅ Windows Installation
 
@@ -79,34 +79,34 @@ ffmpeg -version
 
 ## ▶️ **How to Run Your Downloader**
 
-### 📥 **Basic Usage (MP4 - Best Quality Available)**
+### 📥 **Basic Usage (--format mp4 - Best Quality Available)**
 
 ```bash
-python downloader.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ" mp4
+python downloader.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --format mp4
 ```
 
 ### 📥 **Download with Custom Resolution (e.g. 1080p)**
 
 ```bash
-python downloader.py "https://www.youtube.com/watch?v=abc123" mp4 --resolution 1080
+python downloader.py "https://www.youtube.com/watch?v=abc123" --format mp4 --resolution 1080
 ```
 
-### 🎵 **Download MP3 (Audio Only)**
+### 🎵 **Download --format mp3 (Audio Only)**
 
 ```bash
-python downloader.py "https://www.youtube.com/watch?v=abc123" mp3
+python downloader.py "https://www.youtube.com/watch?v=abc123" --format mp3
 ```
 
 ### 📁 **Save with Custom Title**
 
 ```bash
-python downloader.py "https://www.youtube.com/watch?v=abc123" mp4 --title "My Cool Video"
+python downloader.py "https://www.youtube.com/watch?v=abc123" --format mp4 --title "My Cool Video"
 ```
 
 ### 📁 **Save to Custom Directory**
 
 ```bash
-python downloader.py "https://www.youtube.com/watch?v=abc123" mp4 --output "E:/Videos" --title "Python Tutorial"
+python downloader.py "https://www.youtube.com/watch?v=abc123" --format mp4 --output "E:/Videos" --title "Python Tutorial"
 ```
 
 ---
@@ -116,11 +116,11 @@ python downloader.py "https://www.youtube.com/watch?v=abc123" mp4 --output "E:/V
 Here are some **working test URLs**:
 
 ```bash
-python downloader.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ" mp4 --resolution 720 --title "rickroll"
+python downloader.py "https://www.youtube.com/watch?v=dQw4w9WgXcQ" --format mp4 --resolution 720 --title "rickroll"
 
-python downloader.py "https://www.youtube.com/watch?v=2Vv-BfVoq4g" mp3 --title "Perfect_Song"
+python downloader.py "https://www.youtube.com/watch?v=2Vv-BfVoq4g" --format mp3 --title "Perfect_Song"
 
-python downloader.py "https://www.youtube.com/shorts/Bg4D4PW2WTo" mp4 --resolution 1080 --title "kulosa video song"
+python downloader.py "https://www.youtube.com/shorts/Bg4D4PW2WTo" --format mp4 --resolution 1080 --title "kulosa video song"
 ```
 
 ---
@@ -149,7 +149,7 @@ parser.add_argument('--output', default='E:/YTDownloads', help='Output directory
 | -------------------------------------- | --------------------------------------- |
 | `ffmpeg not found`                     | Add `ffmpeg/bin` to `PATH`              |
 | `Video unavailable`                    | Check URL or try a different resolution |
-| `ValueError: Output format must be...` | Use `mp4` or `mp3` only                 |
+| `ValueError: Output format must be...` | Use `--format mp4` or `--format mp3` only                 |
 
 ---
 
