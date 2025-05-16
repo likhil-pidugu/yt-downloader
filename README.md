@@ -39,7 +39,7 @@
 ### 2️⃣ Install Required Python Packages
 
 ```bash
-pip install yt_dlp tqdm
+pip install yt_dlp tqdm shutil rich pathlib argparse subprocess
 ```
 
 ---
