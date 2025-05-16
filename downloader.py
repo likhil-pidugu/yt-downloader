@@ -1,157 +1,100 @@
-import os
-import shutil
-import argparse
+import argparse, shutil, subprocess
 from pathlib import Path
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import DownloadError
-from tqdm import tqdm
-import warnings
-from time import sleep
-
-
-warnings.filterwarnings("ignore")
+from rich.progress import Progress, BarColumn, TextColumn
 
 TEMP_DIR = Path(".yt_downloader")
 
-class DownloadProgressBar:
-    def __init__(self):
-        self.pbar = None
-        self.last_downloaded = 0
-        self.current_desc = ""
+class QuietLogger:
+    def debug(self, msg): pass
+    def warning(self, msg): pass
+    def error(self, msg): print(f"[Error] {msg}")
 
-    def __call__(self, d):
+def progress_hook(progress_bar, task_id):
+    def hook(d):
         if d['status'] == 'downloading':
-            total_bytes = d.get('total_bytes') or d.get('total_bytes_estimate', 0)
-            downloaded = d.get('downloaded_bytes', 0)
-            desc = d.get('_filename', 'Downloading')
-            
-            # Detect change and reset bar
-            if not self.pbar or desc != self.current_desc:
-                if self.pbar:
-                    self.pbar.close()
-                self.pbar = tqdm(
-                    total=total_bytes,
-                    unit='B',
-                    unit_scale=True,
-                    unit_divisor=1024,
-                    desc=f"Downloading: {Path(desc).suffix.replace('.', '').upper()}",
-                    bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]",
-                    dynamic_ncols=True,
-                    ascii=False,
-                    ncols=80,
-                    leave=False
-                )
-                self.last_downloaded = 0
-                self.current_desc = desc
-
-            increment = downloaded - self.last_downloaded
-            if increment > 0:
-                self.pbar.update(increment)
-            self.last_downloaded = downloaded
-
+            t, dled, s = d.get('total_bytes') or d.get('total_bytes_estimate', 0), d.get('downloaded_bytes', 0), d.get('speed', 0) or 0
+            if t and dled and 'fragment_index' not in d:
+                progress_bar.update(task_id, completed=dled, total=t, downloaded_mb=dled/1048576, total_mb=t/1048576, speed_kbps=s/1024)
         elif d['status'] == 'finished':
-            if self.pbar:
-                self.pbar.close()
-                self.pbar = None
+            t, dled = d.get('total_bytes', 0), d.get('downloaded_bytes', 0)
+            progress_bar.update(task_id, completed=dled, total=t, downloaded_mb=dled/1048576, total_mb=t/1048576, speed_kbps=0)
+    return hook
 
-
-class PostProcessProgressBar:
-    def __call__(self, d):
-        if d['status'] == 'started':
-            with tqdm(
-                total=1,
-                desc="Converting",
-                bar_format="{l_bar}{bar}| {percentage:3.0f}% [{elapsed}]",
-                ncols=80,
-                leave=False
-            ) as pbar:
-                sleep(0.5)  # simulate some time
-                pbar.update(1)
-
-
-def download_video(url: str, output_format: str, output_path: str = "downloads", resolution: str = None, title: str = None):
+def download_youtube_media(url, output_format="mp4", output_path=str(Path.home()/"Downloads"), resolution="720", quality="192", title=None, playlist=False):
     TEMP_DIR.mkdir(exist_ok=True)
-    output_path = Path(output_path)
-    output_path.mkdir(parents=True, exist_ok=True)
+    Path(output_path).mkdir(parents=True, exist_ok=True)
+    temp_out = str(TEMP_DIR / '%(title)s.%(ext)s')
+    final_name = title if title else '%(title)s'
+    final_out = str(Path(output_path) / (final_name + ".%(ext)s"))
 
-    temp_outtmpl = str(TEMP_DIR / '%(title)s.%(ext)s')
+    with Progress(
+        TextColumn("Downloading :"), TextColumn("{task.percentage:>3.0f}%|"),
+        BarColumn(), TextColumn("{task.percentage:>3.0f}%"),
+        TextColumn("[{task.fields[downloaded_mb]:.1f}mb/{task.fields[total_mb]:.1f}mb]"),
+        TextColumn("{task.fields[speed_kbps]:.0f}kb/s"),
+    ) as progress:
+        task = progress.add_task("", start=False, downloaded_mb=0.0, total_mb=0.0, speed_kbps=0)
 
-    # Shared instances to prevent duplicate bars
-    download_hook = DownloadProgressBar()
-    postprocess_hook = PostProcessProgressBar()
+        ydl_opts = {
+            'outtmpl': temp_out, 'noplaylist': not playlist, 'quiet': True,
+            'no_warnings': True, 'progress_hooks': [progress_hook(progress, task)],
+            'restrictfilenames': True, 'logger': QuietLogger(), 'overwrites': True
+        }
 
-    ydl_opts = {
-        'outtmpl': temp_outtmpl,
-        'noplaylist': True,
-        'quiet': True,
-        'no_warnings': True,
-        'progress_hooks': [download_hook],
-        'restrictfilenames': True,
-        'postprocessor_hooks': [postprocess_hook],
-        'logger': None,
-    }
+        if output_format == 'mp4':
+            ydl_opts.update({
+                'format': f"best[ext=mp4][height<={resolution}]/best[ext=mp4]/best",
+            })
+        elif output_format == 'mp3':
+            q = quality if quality in ['128', '192', '320'] else '192'
+            ydl_opts.update({
+                'format': 'bestaudio[ext=m4a]/bestaudio/best',
+                'postprocessors': [{
+                    'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3', 'preferredquality': q
+                }],
+                'prefer_ffmpeg': True
+            })
+        else:
+            return {'status': 'error', 'message': "Invalid format", 'file_path': None}
 
-    if output_format.lower() == 'mp3':
-        ydl_opts.update({
-            'format': 'bestaudio/best',
-            'postprocessors': [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3',
-                'preferredquality': '192',
-            }],
-            'prefer_ffmpeg': True
-        })
-    elif output_format.lower() == 'mp4':
-        format_str = f"bestvideo[height={resolution}]+bestaudio/best" if resolution else "bestvideo+bestaudio/best"
-        ydl_opts.update({
-            'format': format_str,
-            'merge_output_format': 'mp4',
-            'prefer_ffmpeg': True,
-            'postprocessor_args': [
-                '-c:v', 'copy',
-                '-c:a', 'aac',
-                '-b:a', '192k'
-            ]
-        })
-    else:
-        raise ValueError("Output format must be 'mp3' or 'mp4'")
+        try:
+            with YoutubeDL(ydl_opts) as ydl:
+                progress.start_task(task)
+                ydl.download([url])
+            for f in TEMP_DIR.iterdir():
+                if f.is_file():
+                    out_name = f"{title}.{f.suffix.lstrip('.')}" if title else f.name
+                    out_path = Path(output_path) / out_name
+                    shutil.move(str(f), str(out_path))
+            return {'status': 'success', 'message': f"Saved to: {Path(output_path).resolve()}", 'file_path': str(Path(output_path).resolve())}
+        except DownloadError as e:
+            return {'status': 'error', 'message': f"Download failed: {e}", 'file_path': None}
+        finally:
+            shutil.rmtree(TEMP_DIR, ignore_errors=True)
 
+def open_folder(path):
     try:
-        with YoutubeDL(ydl_opts) as ydl:
-            ydl.download([url])
-
-        # Move final file
-        for file in TEMP_DIR.iterdir():
-            if file.is_file():
-                final_name = f"{title}.{file.suffix.lstrip('.')}" if title else file.name
-                final_path = output_path / final_name
-                shutil.move(str(file), str(final_path))
-                print(f"\n✅ Saved to: {final_path.resolve()}")
-
-    except DownloadError as e:
-        print(f"❌ Error: {e}")
-    finally:
-        shutil.rmtree(TEMP_DIR, ignore_errors=True)
-
+        if shutil.which('xdg-open'): subprocess.run(['xdg-open', path])
+        elif shutil.which('open'): subprocess.run(['open', path])
+        elif shutil.which('explorer'): subprocess.run(['explorer', path])
+    except Exception: pass
 
 def main():
-    parser = argparse.ArgumentParser(description="YouTube Downloader")
-    parser.add_argument('url', help='YouTube video URL')
-    parser.add_argument('format', choices=['mp3', 'mp4'], help='Download format')
-    parser.add_argument('--output', default='downloads', help='Output directory')
-    parser.add_argument('--resolution', help='Video resolution (e.g., 720, 1080, 1440)')
-    parser.add_argument('--title', help='Custom title for output file (no extension)')
-    args = parser.parse_args()
-
-    download_video(
-        url=args.url,
-        output_format=args.format,
-        output_path=args.output,
-        resolution=args.resolution,
-        title=args.title
-    )
-
+    p = argparse.ArgumentParser(description="Fast YouTube Downloader")
+    p.add_argument('url'), p.add_argument('--format', choices=['mp3','mp4'], default='mp4')
+    p.add_argument('--output', default=str(Path.home()/"Downloads"))
+    p.add_argument('--resolution', default='720')
+    p.add_argument('--title')
+    p.add_argument('--playlist', action='store_true', help='Download as playlist')
+    p.add_argument('--open', action='store_true', help='Open folder after download')
+    a = p.parse_args()
+    r = a.resolution if a.format=='mp4' else '720'
+    q = a.resolution if a.format=='mp3' else '192'
+    res = download_youtube_media(a.url, a.format, a.output, r, q, a.title, a.playlist)
+    print(res['message'])
+    if a.open and res['status'] == 'success': open_folder(a.output)
 
 if __name__ == '__main__':
     main()
-
