@@ -1,2 +1,7 @@
 tqdm
 yt_dlp
+shutil
+rich
+pathlib
+argparse
+subprocess
