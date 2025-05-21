@@ -3,6 +3,10 @@ from pathlib import Path
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import DownloadError
 from rich.progress import Progress, BarColumn, TextColumn
+import re
+
+def safe_filename(name: str) -> str:
+    return re.sub(r'[<>:"/\\\\|?*]', '_', name)
 
 TEMP_DIR = Path(".yt_downloader")
 
@@ -60,9 +64,40 @@ def download_youtube_media(url, output_format="mp4", output_path=str(Path.home()
             return {'status': 'error', 'message': "Invalid format", 'file_path': None}
 
         try:
+            #########################
             with YoutubeDL(ydl_opts) as ydl:
                 progress.start_task(task)
-                ydl.download([url])
+                if playlist:
+                    info = ydl.extract_info(url, download=False)
+                    entries = info.get("entries", [])
+
+                    for entry in entries:
+                        if not entry:
+                            continue
+                        entry_url = entry.get('webpage_url') or entry.get('url')
+                        entry_title = entry.get('title', 'video')
+                        progress.update(task, description=f"Downloading: {entry_title}")
+
+                        TEMP_DIR.mkdir(exist_ok=True)
+                        with YoutubeDL(ydl_opts) as single_ydl:
+                            single_ydl.download([entry_url])
+
+                        for f in TEMP_DIR.iterdir():
+                            if f.is_file():
+                                clean_name = safe_filename(title or entry_title)
+                                out_name = f"{clean_name}.{f.suffix.lstrip('.')}"
+                                out_path = Path(output_path) / out_name
+                                shutil.move(str(f), str(out_path))
+                                print(f"Saved: {out_name}")
+                        shutil.rmtree(TEMP_DIR, ignore_errors=True)
+                else:
+                    ydl.download([url])
+                    for f in TEMP_DIR.iterdir():
+                        if f.is_file():
+                            out_name = f"{title}.{f.suffix.lstrip('.')}" if title else f.name
+                            out_path = Path(output_path) / out_name
+                            shutil.move(str(f), str(out_path))
+            ##############################
             for f in TEMP_DIR.iterdir():
                 if f.is_file():
                     out_name = f"{title}.{f.suffix.lstrip('.')}" if title else f.name
