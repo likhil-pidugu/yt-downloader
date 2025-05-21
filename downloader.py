@@ -45,7 +45,7 @@ def download_youtube_media(url, output_format="mp4", output_path=str(Path.home()
 
         if output_format == 'mp4':
             ydl_opts.update({
-                'format': f"best[ext=mp4][height<={resolution}]/best[ext=mp4]/best",
+                'format': f"bestvideo[height<={resolution}]+bestaudio/best[ext=mp4]",
             })
         elif output_format == 'mp3':
             q = quality if quality in ['128', '192', '320'] else '192'
@@ -92,7 +92,14 @@ def main():
     a = p.parse_args()
     r = a.resolution if a.format=='mp4' else '720'
     q = a.resolution if a.format=='mp3' else '192'
-    res = download_youtube_media(a.url, a.format, a.output, r, q, a.title, a.playlist)
+    res = download_youtube_media(
+    a.url,
+    a.format,
+    a.output,
+    resolution=a.resolution if a.format == 'mp4' else '720',
+    quality=a.resolution if a.format == 'mp3' else '192',
+    title=a.title,
+    playlist=a.playlist )
     print(res['message'])
     if a.open and res['status'] == 'success': open_folder(a.output)
 
