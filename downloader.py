@@ -64,7 +64,6 @@ def download_youtube_media(url, output_format="mp4", output_path=str(Path.home()
             return {'status': 'error', 'message': "Invalid format", 'file_path': None}
 
         try:
-            #########################
             with YoutubeDL(ydl_opts) as ydl:
                 progress.start_task(task)
                 if playlist:
@@ -92,12 +91,11 @@ def download_youtube_media(url, output_format="mp4", output_path=str(Path.home()
                         shutil.rmtree(TEMP_DIR, ignore_errors=True)
                 else:
                     ydl.download([url])
-                    for f in TEMP_DIR.iterdir():
-                        if f.is_file():
-                            out_name = f"{title}.{f.suffix.lstrip('.')}" if title else f.name
-                            out_path = Path(output_path) / out_name
-                            shutil.move(str(f), str(out_path))
-            ##############################
+                    # for f in TEMP_DIR.iterdir():
+                    #     if f.is_file():
+                    #         out_name = f"{title}.{f.suffix.lstrip('.')}" if title else f.name
+                    #         out_path = Path(output_path) / out_name
+                    #         shutil.move(str(f), str(out_path))
             for f in TEMP_DIR.iterdir():
                 if f.is_file():
                     out_name = f"{title}.{f.suffix.lstrip('.')}" if title else f.name
